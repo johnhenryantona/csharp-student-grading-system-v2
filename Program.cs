@@ -25,7 +25,6 @@ Sophia          92.2            95.88   A       92 (3.68 pts)
 */
 
 // Define the number of graded exam assignments (first 5 are core exams)
-// Define the number of graded exam assignments (first 5 are core exams)
 int examAssignments = 5;
 
 // Array of student names to process in the grading system
@@ -44,17 +43,24 @@ int[] studentScores = new int[10];
 string currentStudentLetterGrade = "";
 
 // Display the header row with multiple columns for detailed grade reporting
+// Columns: Student Name, Exam Score, Overall Grade, Letter Grade, Extra Credit Details
 Console.WriteLine("Student\t\tExam Score\tOverall Grade\tExtra Credit\n");
 
 /*
 The outer foreach loop is used to:
 - iterate through student names 
+- assign a student's grades to the studentScores array
+- sum assignment scores (inner foreach loop)
+- calculate numeric and letter grade
+- write the score report information
+*/
 // Outer loop: Process each student in the class roster
 foreach (string name in studentNames)
 {
     string currentStudent = name;
 
     // Map current student name to their corresponding score array
+    // This if-else chain identifies which student is being processed
     if (currentStudent == "Sophia")
         studentScores = sophiaScores;
 
@@ -68,26 +74,24 @@ foreach (string name in studentNames)
         studentScores = loganScores;
 
     // Separate accumulators for exam scores and extra credit scores
+    // This allows us to calculate and display them independently
     int sumExamScores = 0;
     int sumExtraCreditScores = 0;
 
     // Variables to store calculated grade values
-    decimal currentStudentGrade = 0;               // Overall grade with extra credit
-    decimal currentStudentExamScore = 0;           // Average of exam scores only
+    decimal currentStudentGrade = 0;               // Overall grade with extra credit included
+    decimal currentStudentExamScore = 0;           // Average of exam scores only (first 5)
     decimal currentStudentExtraCreditScore = 0;    // Average of extra credit scores
 
     // Counters for tracking assignments processed
     int gradedAssignments = 0;                     // Total assignments processed
-    int gradedExtraCreditAssignments = 0;          // Extra credit assignments count
+    int gradedExtraCreditAssignments = 0;          // Count of extra credit assignments
 
-    // Track the point contribution from extra credit to overall grade    decimal currentStudentExamScore = 0;
-    decimal currentStudentExtraCreditScore = 0;
-
-    int gradedAssignments = 0;
-    int gradedExtraCreditAssignments = 0;
-
+    // Track the point contribution from extra credit to overall grade
+    // This shows students the boost they received from doing extra work
     decimal extraCreditPoints = 0;
-// Inner loop: Process each assignment score for the current student
+
+    // Inner loop: Process each assignment score for the current student
     foreach (int score in studentScores)
     {
         gradedAssignments += 1;
@@ -95,83 +99,82 @@ foreach (string name in studentNames)
         // Categorize score as either exam (first 5) or extra credit (beyond first 5)
         if (gradedAssignments <= examAssignments)
         {
-            // Add to exam score accumulator
+            // Add to exam score accumulator (full weight)
             sumExamScores += score;
         }
         else
         {
             // Count and accumulate extra credit assignments separately
+            // These will be weighted at 10% of their value later
             gradedExtraCreditAssignments += 1;
             sumExtraCreditScores += score;
         }
     }
 
     // Calculate exam score average (first 5 assignments only)
-    // Assign letter grade based on overall grade using if-else chain
-    // Grade boundaries: A+ (97+), A (93+), A- (90+), B+ (87+), etc.
+    // This shows performance on required work without extra credit boost
+    currentStudentExamScore = (decimal)(sumExamScores) / examAssignments;
+    
+    // Calculate average extra credit score for display purposes
+    // Shows the average score earned on bonus assignments
+    currentStudentExtraCreditScore = (decimal)(sumExtraCreditScores) / gradedExtraCreditAssignments;
+    
+    // Calculate overall grade: exam average + (weighted extra credit / number of exams)
+    // Formula: (Sum of Exams + (Extra Credit Total ÷ 10)) ÷ Number of Exams
+    // Extra credit is divided by 10 to give it 10% weight
+    currentStudentGrade = (decimal)((decimal)sumExamScores + ((decimal)sumExtraCreditScores / 10)) / examAssignments;
+    
+    // Calculate how many points extra credit contributed to the overall grade
+    extraCreditPoints = (decimal)((decimal)sumExtraCreditScores / 10) / examAssignments;
+
+    // Assign letter grade based on overall grade using if-else ladder
+    // Uses standard grading scale with +/- modifiers
+    // Grade boundaries: 97+ (A+), 93+ (A), 90+ (A-), 87+ (B+), etc.
     if (currentStudentGrade >= 97)
-        currentStudentLetterGrade = "A+";
+        currentStudentLetterGrade = "A+";    // 97-100
 
     else if (currentStudentGrade >= 93)
-        currentStudentLetterGrade = "A";
+        currentStudentLetterGrade = "A";     // 93-96
 
     else if (currentStudentGrade >= 90)
-        currentStudentLetterGrade = "A-";
+        currentStudentLetterGrade = "A-";    // 90-92
 
     else if (currentStudentGrade >= 87)
-        currentStudentLetterGrade = "B+";
+        currentStudentLetterGrade = "B+";    // 87-89
 
     else if (currentStudentGrade >= 83)
-        currentStudentLetterGrade = "B";
+        currentStudentLetterGrade = "B";     // 83-86
 
     else if (currentStudentGrade >= 80)
-        currentStudentLetterGrade = "B-";
+        currentStudentLetterGrade = "B-";    // 80-82
 
     else if (currentStudentGrade >= 77)
-        currentStudentLetterGrade = "C+";
+        currentStudentLetterGrade = "C+";    // 77-79
 
     else if (currentStudentGrade >= 73)
-        currentStudentLetterGrade = "C";
+        currentStudentLetterGrade = "C";     // 73-76
 
     else if (currentStudentGrade >= 70)
-        currentStudentLetterGrade = "C-";
+        currentStudentLetterGrade = "C-";    // 70-72
 
     else if (currentStudentGrade >= 67)
-        currentStudentLetterGrade = "D+";
+        currentStudentLetterGrade = "D+";    // 67-69
 
     else if (currentStudentGrade >= 63)
-        currentStudentLetterGrade = "D";
+        currentStudentLetterGrade = "D";     // 63-66
 
     else if (currentStudentGrade >= 60)
-        currentStudentLetterGrade = "D-";
+        currentStudentLetterGrade = "D-";    // 60-62
 
     else
-        currentStudentLetterGrade = "F";
+        currentStudentLetterGrade = "F";     // Below 60
 
     // Display comprehensive grade report with 5 columns:
-    // Student name, exam average, overall grade with letter, and extra credit details
-    else if (currentStudentGrade >= 73)
-        currentStudentLetterGrade = "C";
-
-    else if (currentStudentGrade >= 70)
-        currentStudentLetterGrade = "C-";
-Pause program execution to allow user to review the detailed grade report
-// R
-    else if (currentStudentGrade >= 67)
-        currentStudentLetterGrade = "D+";
-
-    else if (currentStudentGrade >= 63)
-        currentStudentLetterGrade = "D";
-
-    else if (currentStudentGrade >= 60)
-        currentStudentLetterGrade = "D-";
-
-    else
-        currentStudentLetterGrade = "F";
-
+    // 1. Student name, 2. Exam average, 3. Overall grade, 4. Letter grade, 5. Extra credit details
     Console.WriteLine($"{currentStudent}\t\t{currentStudentExamScore}\t\t{currentStudentGrade}\t{currentStudentLetterGrade}\t{currentStudentExtraCreditScore} ({extraCreditPoints} pts)");
 }
 
-// required for running in VS Code (keeps the Output windows open to view results)
+// Pause program execution to allow user to review the detailed grade report
+// Required for running in VS Code (keeps the Output windows open to view results)
 Console.WriteLine("\n\rPress the Enter key to continue");
 Console.ReadLine();
